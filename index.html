@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroScholar - IA Éducative</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #f72585;
+            --text-dark: #333;
+            --text-light: #666;
+            --bg-white: #ffffff;
+            --bg-light: #f8f9fa;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --border: 1px solid #e0e0e0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background: var(--bg-white);
+            color: var(--text-dark);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .header {
+            padding: 1.5rem;
+            text-align: center;
+            background: var(--bg-white);
+            border-bottom: var(--border);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .title {
+            font-size: 2rem;
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-light);
+            font-weight: 400;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .nav-button {
+            padding: 0.5rem 1.5rem;
+            background: var(--bg-light);
+            border: var(--border);
+            border-radius: 2rem;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-button:hover {
+            background: #e9ecef;
+        }
+
+        .nav-button.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            padding-bottom: 5rem;
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            min-height: 400px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 1rem;
+            max-width: 80%;
+            animation: fadeIn 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            position: relative;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user-message {
+            background: #e3f2fd;
+            margin-right: auto;
+            border-bottom-left-radius: 0.25rem;
+            align-self: flex-start;
+        }
+
+        .bot-message {
+            background: var(--bg-light);
+            border: var(--border);
+            margin-left: auto;
+            border-bottom-right-radius: 0.25rem;
+            align-self: flex-end;
+        }
+
+        .input-area {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1rem;
+            background: var(--bg-white);
+            display: flex;
+            gap: 0.5rem;
+            border-top: var(--border);
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+
+        .input-field {
+            flex: 1;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: var(--border);
+            background: var(--bg-white);
+            color: var(--text-dark);
+            font-size: 1rem;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+        }
+
+        .education-form {
+            background: var(--bg-white);
+            border-radius: 0.5rem;
+            border: var(--border);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: var(--border);
+            font-size: 1rem;
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .knowledge-list {
+            list-style: none;
+            margin: 1rem 0;
+        }
+
+        .knowledge-item {
+            background: var(--bg-light);
+            border: var(--border);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .knowledge-question {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .knowledge-answer {
+            color: var(--text-dark);
+        }
+
+        .knowledge-keywords {
+            margin-top: 0.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .knowledge-keyword {
+            background: #e3f2fd;
+            color: var(--primary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #niveauContainer .education-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1 class="title">NeuroScholar</h1>
+        <p class="subtitle">IA Éducative avec Apprentissage Automatique</p>
+        <div class="nav-buttons">
+            <button class="nav-button active" onclick="switchMode('chat')">Discussion</button>
+            <button class="nav-button" onclick="switchMode('education')">Éducation</button>
+            <button class="nav-button" onclick="switchMode('niveau')">Niveau</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div id="chatContainer" class="chat-container">
+            <div class="message bot-message">
+                Bonjour ! Je suis NeuroScholar, posez-moi une question.
+            </div>
+        </div>
+
+        <div id="educationContainer" class="hidden">
+            <div class="education-form">
+                <h2>Ajouter une nouvelle connaissance</h2>
+                <div id="successMessage" class="success-message hidden">
+                    Connaissance ajoutée avec succès !
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Question</label>
+                    <input type="text" id="questionInput" class="form-control" placeholder="Exemple: Qu'est-ce que l'IA ?">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Réponse</label>
+                    <textarea id="answerInput" class="form-control" rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Mots-clés</label>
+                    <input type="text" id="keywordsInput" class="form-control" placeholder="IA, Technologie, Apprentissage">
+                </div>
+                <button class="btn btn-primary" onclick="addKnowledge()">Enregistrer</button>
+            </div>
+            
+            <h3 style="margin-top: 2rem;">Connaissances récentes</h3>
+            <ul id="knowledgeList" class="knowledge-list"></ul>
+        </div>
+
+        <div id="niveauContainer" class="hidden">
+            <div class="education-form">
+                <h2>Progression</h2>
+                <div style="margin: 2rem 0; text-align: center;">
+                    <h3>Niveau : Intermédiaire</h3>
+                    <div style="background: #eee; height: 20px; border-radius: 10px; margin: 1rem 0;">
+                        <div style="background: var(--primary); width: 65%; height: 100%; border-radius: 10px;"></div>
+                    </div>
+                    <p>65% vers le niveau avancé</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="input-area">
+        <input type="text" id="userInput" class="input-field" placeholder="Écrivez votre message...">
+        <button class="btn btn-primary" onclick="sendMessage()">Envoyer</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.0.0/dist/umd/supabase.min.js"></script>
+    <script>
+        const supabaseUrl = 'https://eqzkbmgjefctpeokhovx.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxemtibWdqZWZjdHBlb2tob3Z4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY5NjIwNDksImV4cCI6MjA2MjUzODA0OX0.YM0rpO9F-lxlplhM3A_sU5OWpWLHAWnAiZgjoGHbPoc';
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+        let knowledgeBase = {};
+
+        async function loadKnowledgeFromSupabase() {
+            try {
+                const { data, error } = await supabase
+                    .from('knowledge_base')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                
+                if (!error) {
+                    knowledgeBase = data.reduce((acc, item) => {
+                        acc[item.question.toLowerCase()] = item;
+                        return acc;
+                    }, {});
+                    
+                    // Mettre à jour l'interface
+                    const knowledgeList = document.getElementById('knowledgeList');
+                    knowledgeList.innerHTML = data.slice(0, 5).map(item => `
+                        <li class="knowledge-item">
+                            <div class="knowledge-question">${item.question}</div>
+                            <div class="knowledge-answer">${item.answer}</div>
+                            <div class="knowledge-keywords">
+                                ${item.keywords.split(',').map(k => `<span class="knowledge-keyword">${k.trim()}</span>`).join('')}
+                            </div>
+                        </li>
+                    `).join('');
+                }
+            } catch (err) {
+                console.error("Erreur de chargement:", err);
+            }
+        }
+
+        function switchMode(mode) {
+            document.querySelectorAll('.nav-button').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.toLowerCase().includes(mode)) {
+                    btn.classList.add('active');
+                }
+            });
+
+            ['chatContainer', 'educationContainer', 'niveauContainer'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            document.getElementById(`${mode}Container`).classList.remove('hidden');
+
+            document.querySelector('.input-area').classList.toggle('hidden', mode !== 'chat');
+        }
+
+        function addMessage(text, isUser) {
+            const chatContainer = document.getElementById('chatContainer');
+            const message = document.createElement('div');
+            message.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+            message.textContent = text;
+            chatContainer.appendChild(message);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+            const question = input.value.trim();
+            if (!question) return;
+
+            addMessage(question, true);
+            input.value = '';
+
+            setTimeout(async () => {
+                const response = knowledgeBase[question.toLowerCase()]?.answer || 
+                    "Je ne connais pas la réponse à cette question. Voulez-vous m'enseigner la réponse en utilisant le mode Éducation ?";
+                addMessage(response, false);
+            }, 800);
+        }
+
+        async function addKnowledge() {
+            const question = document.getElementById('questionInput').value.trim();
+            const answer = document.getElementById('answerInput').value.trim();
+            const keywords = document.getElementById('keywordsInput').value.trim();
+
+            if (question && answer) {
+                const { error } = await supabase
+                    .from('knowledge_base')
+                    .insert([{ question, answer, keywords }]);
+
+                if (!error) {
+                    knowledgeBase[question.toLowerCase()] = { question, answer, keywords };
+                    
+                    const successMessage = document.getElementById('successMessage');
+                    successMessage.classList.remove('hidden');
+                    setTimeout(() => successMessage.classList.add('hidden'), 3000);
+
+                    document.getElementById('questionInput').value = '';
+                    document.getElementById('answerInput').value = '';
+                    document.getElementById('keywordsInput').value = '';
+
+                    await loadKnowledgeFromSupabase();
+                }
+            }
+        }
+
+        // Initialisation
+        window.onload = async () => {
+            await loadKnowledgeFromSupabase();
+            switchMode('chat');
+        };
+    </script>
+</body>
+</html>
